@@ -32,8 +32,17 @@ module Circleci
       def self.create_branch(git_username, git_email, branch)
         system("git config user.name #{git_username}")
         system("git config user.email #{git_email}")
-        system("git add -u")
-        system("git commit -m '$ bundle exec rubocop -a'")
+        system("bundle exec rubocop --auto-gen-config")
+        Tempfile.open('') do |file|
+          FileUtils.mv('rubocop_todo.yml', file.path)
+          system("git checkout .")
+          auto_correctable_cops = File.read(file.path).scan(/--auto-correct\.\n[\s\S]*?(^[^#].+?):/).flatten
+          auto_correctable_cops.each do |cop|
+            system("bundle exec rubocop -a --only #{cop}")
+            system("git add -u")
+            system("git commit -m '$ bundle exec rubocop -a --only #{cop}'")
+          end
+        end
         system("git branch -M #{branch}")
         system("git push origin #{branch}")
       end
