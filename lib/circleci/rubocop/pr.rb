@@ -22,8 +22,8 @@ module Circleci
 
       def self.need?(git_branches)
         return false unless git_branches.include?(ENV['CIRCLE_BRANCH'])
-        unless system("bundle exec rubocop -a")
-          raise "Unable to execute `bundle exec rubocop -a`"
+        if system("bundle exec rubocop -a")
+          raise "`bundle exec rubocop -a` exits 0. your code is so good!)"
         end
         `git status -sb 2> /dev/null`.empty?.!
       end
