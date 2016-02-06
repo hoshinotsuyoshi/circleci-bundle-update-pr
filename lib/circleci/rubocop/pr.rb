@@ -32,7 +32,7 @@ module Circleci
       def self.create_branch(git_username, git_email, branch)
         system("git config user.name #{git_username}")
         system("git config user.email #{git_email}")
-        system("git add -A")
+        system("git add -u")
         system("git commit -m '$ bundle exec rubocop -a'")
         system("git branch -M #{branch}")
         system("git push origin #{branch}")
