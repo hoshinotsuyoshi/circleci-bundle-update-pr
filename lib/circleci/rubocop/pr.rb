@@ -1,5 +1,6 @@
 require "circleci/rubocop/pr/version"
 require "octokit"
+require "tempfile"
 
 module Circleci
   module Rubocop
